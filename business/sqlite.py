@@ -47,13 +47,12 @@ def get_transfer_v1(content):
 	#print (contents)
 	line_chick=contents[2].replace("\n",'')
 	line_detail=contents[3].replace("\n",'')
-	if 
-
+	order_count=
 	print (line_chick)
 	print (line_detail)
 	list_chick=line_chick.split('，')
 	order_type=list_chick[0]
-	if'购买' in order_type :
+	'''if'购买' in order_type :
 		list_chick=line_chick.split('，')
 		print(list_chick)
 		if ',' in line_detail:
@@ -201,7 +200,7 @@ def get_transfer_v1(content):
 			print (sit_flow)
 
 	#print(list_chick)
-	#print (list_detail)
+	#print (list_detail)'''
 
 
 def get_subject(num):

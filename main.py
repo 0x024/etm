@@ -53,7 +53,7 @@ def get_transfer_v1(content):
 	print (line_detail)
 	list_chick=line_chick.split('，')
 	order_type=list_chick[0]
-	if'购买' in order_type :
+	'''if'购买' in order_type :
 		list_chick=line_chick.split('，')
 		print(list_chick)
 		if ',' in line_detail:
@@ -201,7 +201,7 @@ def get_transfer_v1(content):
 			print (sit_flow)
 
 	#print(list_chick)
-	#print (list_detail)
+	#print (list_detail)'''
 
 
 def get_subject(num):
@@ -254,8 +254,8 @@ def get_content(num):
 			print("OOOOOO")
 			get_content(email_list[int(count)])
 			continue'''
-get_date(email_list[272])
-get_content(email_list[272])
+get_date(email_list[21])
+get_content(email_list[21])
 	
 
 
