@@ -45,6 +45,8 @@ def get_transfer_v1(content):
 	line_chick=contents[2].replace("\n",'').replace("\r",'')
 	list_chick=line_chick.split('，')
 
+
+
 	order_type=list_chick[0]
 	if  '购买' in order_type :
 		order_count=int(list_chick[0][-4])
@@ -56,14 +58,14 @@ def get_transfer_v1(content):
 				list_detail=line_detail.split(',')
 			elif '，' in line_detail:
 				list_detail=line_detail.split('，')
-			print (list_chick)
+			print(list_chick)
 			print (list_detail)
-			print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
 			print ('第'+str(count)+'张车票信息如下')
 			order_no=list_chick[2][4:].split('。')[0]
 			print('订单号:'+str(order_no))
 			order_purchaser='张文'
-			print('付款人:'+order_purchaser)
+			print('操作人员:'+order_purchaser)
 			order_date=list_chick[0][2:13]
 			print ('订单日期:'+order_date)
 			order_price=list_chick[1][4:]
@@ -99,32 +101,31 @@ def get_transfer_v1(content):
 				sit_flow=list_detail[4][-2]
 				print ('卧铺位置:'+sit_flow)
 			count=count+1
-			print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
 			
 
 
 	elif '退票' in order_type:
-		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
 		line_detail=contents[3].replace("\n",'').replace("\r",'')
-		list_chick=line_chick.split('，')
-		print(list_chick)
 		if ',' in line_detail:
 			list_detail=line_detail.split(',')
 		elif '，' in line_detail:
 			list_detail=line_detail.split('，')
+		print(list_chick)
 		print (list_detail)
+		print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
+
 		order_no=list_chick[1].split('。')[0][5:]
 		print('订单号:'+str(order_no))
 		order_purchaser='张文'
-		print('付款人:'+order_purchaser)
+		print('操作人员:'+order_purchaser)
 		order_date=list_chick[0][2:13]
 		print ('订单日期:'+order_date)
 		order_type="退票"
 		print ('订单状态:'+order_type)
 		train_passenger=list_detail[0]
-		print ('火车乘客:'+train_passenger)
+		print ('退票乘客:'+train_passenger)
 		train_date=order_date[0:5]+list_detail[1]
 		print ('发车日期:'+train_date)
 		train_no=list_detail[3].replace("次列车",'')
@@ -155,54 +156,64 @@ def get_transfer_v1(content):
 		print ('退手续费:'+transfer_fee)
 		drawback_fee=list_detail[8][4:]
 		print ('应退金额:'+drawback_fee)
-		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+		print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
 	elif  '改签' in order_type :
-		line_detail=contents[3].replace("\n",'')
-		list_chick=line_chick.split('，')
-		print(list_chick)
-		if ',' in line_detail:
-			list_detail=line_detail.split(',')
-		elif '，' in line_detail:
-			list_detail=line_detail.split('，')
-		print (list_detail)
-		print ('改签')
-		order_purchaser='张文'
-		print(order_purchaser)
-		order_no=list_chick[2].split('。')[1][4:]
-		print(order_no)
-		order_date=list_chick[0][2:13]
-		print (order_date)
-		order_price=list_chick[1][7:]
-		print (order_price)
-		order_type="改签"
-		print (order_type)
-		train_passenger=list_detail[0].split('.')[1]
-		print (train_passenger)
-		train_date=list_detail[1][:-1]
-		print (train_date)
-		train_price=list_detail[6][2:]
-		print (train_price)
-		train_no=list_detail[3].replace("次列车",'')
-		print (train_no)
-		train_type=list_detail[3][0]
-		if train_type.isdigit():
-			print ("normla")
-		else:
-			print (train_type)
-		start_station=list_detail[2].split('—')[0]
-		print (start_station)
-		stop_station=list_detail[2].split('—')[1]
-		print (stop_station)
-		sit_row=list_detail[4].split("车")[0]
-		print (sit_row)
-		sit_no=list_detail[4].split("车")[1].split("号")[0]
-		print (sit_no)
-		sit_type=list_detail[5]
-		print (sit_type)
-		if sit_type=="硬卧":
-			sit_flow=list_detail[4][-2]
-			print (sit_flow)
+		order_count=int(list_chick[0][-2])
+		print ('此订单包含'+str(order_count)+'张车票')
+		count =1
+		while count < order_count+1:
+			line_detail=contents[count+2].replace("\n",'').replace("\r",'')
+			if ',' in line_detail:
+				list_detail=line_detail.split(',')
+			elif '，' in line_detail:
+				list_detail=line_detail.split('，')
+			if ',' in line_detail:
+				list_detail=line_detail.split(',')
+			elif '，' in line_detail:
+				list_detail=line_detail.split('，')
+			print(list_chick)
+			print (list_detail)
+			print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
+			order_no=list_chick[2].split('。')[1][4:]
+			print('订单号:'+str(order_no))
+			order_purchaser='张文'
+			print('操作人员:'+order_purchaser)
+			order_date=list_chick[0][2:13]
+			print ('订单日期:'+order_date)
+			order_type="退票"
+			print ('订单状态:'+order_type)
+			train_passenger=list_detail[0].split('.')[1]
+			print ('改签乘客:'+train_passenger)
+			train_date=order_date[0:5]+list_detail[1].replace("开",'')
+			print ('发车日期:'+train_date)
+			train_no=list_detail[3].replace("次列车",'')
+			print ('火车车次:'+train_no)
+			train_price=list_detail[6][2:]
+			print ('火车票价:'+train_price)
+			train_type=list_detail[3][0]
+
+			if train_type.isdigit():
+				train_type='绿皮'
+				print ('火车类型:绿皮火车')
+			else:
+				print ('火车类型:'+train_type)
+			start_station=list_detail[2].split('—')[0]
+			print ('出发站:'+start_station)
+			stop_station=list_detail[2].split('—')[1]
+			print ('终点站:'+stop_station)
+			sit_type=list_detail[5]
+			print ('座位类型:'+sit_type)
+			sit_row=list_detail[4].split("车")[0].replace(" ","")
+			print ('车号:'+sit_row)
+			sit_no=list_detail[4].split("车")[1].split("号")[0]
+			print ('座位号:'+sit_no)
+			if sit_type=="硬卧":
+				sit_flow=list_detail[4][-2]
+				print ('卧铺位置:'+sit_flow)
+			count=count+1
+			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
+
 
 	#print(list_chick)
 	#print (list_detail)
@@ -468,8 +479,8 @@ def get_content(num):
 
 if __name__ == '__main__':
 	count = 1
-	while count < 2:
-		print("********************************************")
+	while count < 170:
+		print("******************part_1*********************")
 		print('现在开始查询第'+str(count)+'封邮件')
 		org_addrs=str(get_from(email_list[int(count)]))
 		#print (isinstance(org_addrs,str))
@@ -478,8 +489,8 @@ if __name__ == '__main__':
 			print("已匹配到12306邮件，下一步解析该邮件")
 			get_content(email_list[int(count)])
 		count=count+1
-		
-		print("********************************************")
+		print("此邮件解析完毕了")
+		print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~~~~~~~")
 
 #
 #get_from(email_list[330])
