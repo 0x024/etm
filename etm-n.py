@@ -49,8 +49,19 @@ def get_transfer_v1(content):
 
 	order_type=list_chick[0]
 	if  '购买' in order_type :
+		print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
 		order_count=int(list_chick[0][-4])
 		print ('此订单包含'+str(order_count)+'张车票')
+		order_no=list_chick[2][4:].split('。')[0]
+		print('订单号:'+str(order_no))
+		order_purchaser='张文'
+		print('操作人员:'+order_purchaser)
+		order_date=list_chick[0][2:13]
+		print ('订单日期:'+order_date)
+		order_price=list_chick[1][4:]
+		print ('订单金额:'+order_price)
+		order_type="购买"
+		print ('订单状态:'+order_type)
 		count =1
 		while count < order_count+1:
 			line_detail=contents[count+2].replace("\n",'').replace("\r",'')
@@ -60,18 +71,7 @@ def get_transfer_v1(content):
 				list_detail=line_detail.split('，')
 			print(list_chick)
 			print (list_detail)
-			print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
 			print ('第'+str(count)+'张车票信息如下')
-			order_no=list_chick[2][4:].split('。')[0]
-			print('订单号:'+str(order_no))
-			order_purchaser='张文'
-			print('操作人员:'+order_purchaser)
-			order_date=list_chick[0][2:13]
-			print ('订单日期:'+order_date)
-			order_price=list_chick[1][4:]
-			print ('订单金额:'+order_price)
-			order_type="购买"
-			print ('订单状态:'+order_type)
 			train_passenger=list_detail[0].split('.')[1]
 			print ('火车乘客:'+train_passenger)
 			train_date=list_detail[1][:-1]
@@ -93,13 +93,18 @@ def get_transfer_v1(content):
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
 			sit_row=list_detail[4].split("车")[0]
-			print ('车号:'+sit_row)
+			print ('车厢号:'+sit_row)
 			sit_no=list_detail[4].split("车")[1].split("号")[0]
 			print ('座位号:'+sit_no)
 
 			if sit_type=="硬卧":
 				sit_flow=list_detail[4][-2]
 				print ('卧铺位置:'+sit_flow)
+			'''if start_station=="郑州东站":
+				ticket_entrance=list_detail[6][3:].split("。")[0]
+				print ("检票口:"+ticket_entrance)
+			else:
+				print("非郑州东站，不检测检票口")'''
 			count=count+1
 			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -115,7 +120,6 @@ def get_transfer_v1(content):
 		print(list_chick)
 		print (list_detail)
 		print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
-
 		order_no=list_chick[1].split('。')[0][5:]
 		print('订单号:'+str(order_no))
 		order_purchaser='张文'
@@ -132,8 +136,11 @@ def get_transfer_v1(content):
 		print ('火车车次:'+train_no)
 		train_price=list_detail[6][2:]
 		print ('原始票价:'+train_price)
+		transfer_fee=list_detail[7][3:]
+		print ('退手续费:'+transfer_fee)
+		drawback_fee=list_detail[8][4:]
+		print ('应退金额:'+drawback_fee)
 		train_type=list_detail[3][0]
-
 		if train_type.isdigit():
 			train_type='绿皮'
 			print ('火车类型:绿皮火车')
@@ -146,21 +153,30 @@ def get_transfer_v1(content):
 		sit_type=list_detail[5]
 		print ('座位类型:'+sit_type)
 		sit_row=list_detail[4].split("车")[0].replace(" ","")
-		print ('车号:'+sit_row)
+		print ('车厢号:'+sit_row)
 		sit_no=list_detail[4].split("车")[1].split("号")[0]
 		print ('座位号:'+sit_no)
 		if sit_type=="硬卧":
 			sit_flow=list_detail[4][-2]
 			print ('卧铺位置:'+sit_flow)
-		transfer_fee=list_detail[7][3:]
-		print ('退手续费:'+transfer_fee)
-		drawback_fee=list_detail[8][4:]
-		print ('应退金额:'+drawback_fee)
+		'''if start_station=="郑州东站":
+			ticket_entrance=list_detail[6][3:].split("。")[0]
+			print ("检票口:"+ticket_entrance)
+		else:
+			print("非郑州东站，不检测检票口")'''
 		print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
 	elif  '改签' in order_type :
 		order_count=int(list_chick[0][-2])
 		print ('此订单包含'+str(order_count)+'张车票')
+		order_no=list_chick[2].split('。')[1][4:]
+		print('订单号:'+str(order_no))
+		order_purchaser='张文'
+		print('操作人员:'+order_purchaser)
+		order_date=list_chick[0][2:13]
+		print ('订单日期:'+order_date)
+		order_type="退票"
+		print ('订单状态:'+order_type)
 		count =1
 		while count < order_count+1:
 			line_detail=contents[count+2].replace("\n",'').replace("\r",'')
@@ -175,14 +191,7 @@ def get_transfer_v1(content):
 			print(list_chick)
 			print (list_detail)
 			print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
-			order_no=list_chick[2].split('。')[1][4:]
-			print('订单号:'+str(order_no))
-			order_purchaser='张文'
-			print('操作人员:'+order_purchaser)
-			order_date=list_chick[0][2:13]
-			print ('订单日期:'+order_date)
-			order_type="退票"
-			print ('订单状态:'+order_type)
+			print ('第'+str(count)+'张车票信息如下')
 			train_passenger=list_detail[0].split('.')[1]
 			print ('改签乘客:'+train_passenger)
 			train_date=order_date[0:5]+list_detail[1].replace("开",'')
@@ -192,7 +201,6 @@ def get_transfer_v1(content):
 			train_price=list_detail[6][2:]
 			print ('火车票价:'+train_price)
 			train_type=list_detail[3][0]
-
 			if train_type.isdigit():
 				train_type='绿皮'
 				print ('火车类型:绿皮火车')
@@ -205,12 +213,17 @@ def get_transfer_v1(content):
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
 			sit_row=list_detail[4].split("车")[0].replace(" ","")
-			print ('车号:'+sit_row)
+			print ('车厢号:'+sit_row)
 			sit_no=list_detail[4].split("车")[1].split("号")[0]
 			print ('座位号:'+sit_no)
 			if sit_type=="硬卧":
 				sit_flow=list_detail[4][-2]
 				print ('卧铺位置:'+sit_flow)
+			'''if start_station=="郑州东站":
+				ticket_entrance=list_detail[6][3:].split("。")[0]
+				print ("检票口:"+ticket_entrance)
+			else:
+				print("非郑州东站，不检测检票口")'''
 			count=count+1
 			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -226,7 +239,7 @@ def get_transfer_v2(content):
 	a6=a5.replace('(<a href="http://www.12306.cn">12306.cn</a>)','')
 	tree=etree.HTML(a6)
 	contents=tree.xpath('//text()')
-	print (contents)
+	#print (contents)
 
 	line_chick_part1=contents[30].replace("\n",'').replace("\t",'').replace("\t",'')	
 	line_chick_part2=contents[32].replace("\n",'').replace("\t",'').replace("\t",'')	
@@ -236,151 +249,165 @@ def get_transfer_v2(content):
 	print (line_chick_part3)
 	order_type=line_chick_part2
 	if '购买' in order_type :
+		print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
 		order_count=int(line_chick_part2.split("，")[0][-4])
-		if order_count==2:
-			print ('!!!!!!!!!!!!!!!!!!!!!!!!!')
+		print ('此订单包含'+str(order_count)+'张车票')
+		order_no=line_chick_part3
+		print("订单号:"+order_no)
+		order_purchaser='张文'
+		print("操作人员:"+order_purchaser)
+		order_date=line_chick_part1[2:13]
+		print("订单日期:"+order_date)
+		order_price=line_chick_part2.split("，")[1][4:]
+		print("订单价格:"+order_price)
+		order_type="购买"
+		print("订单状态:"+order_type)
 		count =1
 		while count < order_count+1:
-
 			list_detail=contents[(count*2)+39].replace("\n",'').replace("\r",'').replace("\t",'').split("，")
 			print (list_detail)
-			print ("购买")
-			order_purchaser='张文'
-			print(order_purchaser)
-			order_no=line_chick_part3
-			print(order_no)
-			order_date=line_chick_part1[2:13]
-			print (order_date)
-			order_price=line_chick_part2.split("，")[1][4:]
-			print (order_price)
-			order_type="购买"
-			print (order_type)
+			print ('第'+str(count)+'张车票信息如下')
 			train_passenger=list_detail[0].split('.')[1]
-			print (train_passenger)
+			print ("火车乘客:"+train_passenger)
 			train_date=list_detail[1][:-1]
-			print (train_date)
-			train_price=list_detail[5][2:]
-			print (train_price)
+			print ("发车日期:"+train_date)
 			train_no=list_detail[3].split(",")[0].replace("次列车",'')
-			print (train_no)
+			print ("火车车次:"+train_no)
+			train_price=list_detail[5][2:]
+			print ("火车票价:"+train_price)
 			train_type=list_detail[3][0]
 			if train_type.isdigit():
-				print ("normla")
+				train_type='绿皮'
+				print ('火车类型:绿皮火车')
 			else:
-				print (train_type)
+				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('-')[0]
-			print (start_station)
+			print ("出发站:"+start_station)
 			stop_station=list_detail[2].split('-')[1]
-			print (stop_station)
-			sit_row=list_detail[3].split(",")[1].split("车")[0]
-			print (sit_row)
-			sit_no=list_detail[3].split(",")[1].split("车")[1].replace("号","")
-			print (sit_no)
+			print ("终点站:"+stop_station)
 			sit_type=list_detail[4]
-			print (sit_type)
+			print ("座位类型:"+sit_type)
+			sit_row=list_detail[3].split(",")[1].split("车")[0]
+			print ("车厢号:"+sit_row)
+			sit_no=list_detail[3].split(",")[1].split("车")[1].replace("号","")
+			print ("座位号:"+sit_no)
 			if sit_type=="硬卧":
 				sit_flow=list_detail[4][-2]
-				print (sit_flow)
-			try:
-				ticket_entrance=list_detail[6][3:].split("。")[0]
-				print (ticket_entrance)
-			except IndexError:
-				print("qwqww")
+				print ("卧铺位置:"+sit_flow)
+			if start_station=="郑州东站":
 
+				try:
+					ticket_entrance=list_detail[6][3:].split("。")[0]
+					print ("检票口:"+ticket_entrance)
+				except IndexError:
+					print ("虽是郑州东站，但确实没标记进站口")
+			else:
+				print("非郑州东站，不检测检票口")
 			count=count+1
-			
+			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
 
 	elif '退票' in order_type:
 		line_chick_part4=contents[34].replace("\n",'').replace("\t",'').replace("\t",'')
 		list_detail=contents[41].replace("\n",'').replace("\r",'').replace("\t",'').split("，")
 		print (list_detail)
-		print ("退票")
-		order_purchaser='张文'
-		print(order_purchaser)
 		order_no=line_chick_part3
-		print(order_no)
+		print("订单号:"+order_no)
+		order_purchaser='张文'
+		print("操作人员:"+order_purchaser)
 		order_date=line_chick_part1[2:13]
-		print (order_date)
+		print ("订单日期:"+order_date)
 		order_type="退票"
-		print (order_type)
+		print ("订单状态:"+order_type)
 		train_passenger=list_detail[0]
-		print (train_passenger)
+		print ("退票乘客:"+train_passenger)
 		train_date=list_detail[1][2:16]
-		print (train_date)
-		train_price=list_detail[5][2:]
-		print (train_price)
+		print ("发车日期:"+train_date)
 		train_no=list_detail[3].split(",")[0].replace("次列车",'')
-		print (train_no)
+		print ("火车车次:"+train_no)
+		train_price=list_detail[5][2:]
+		print ("原始票价:"+train_price)
+		
+		try:
+			transfer_fee=list_detail[6][3:]
+			print ('退手续费:'+transfer_fee)
+			drawback_fee=list_detail[7][4:]
+			print ('应退金额:'+drawback_fee)
+		except IndexError:
+			print ("票据内容不标准，忽略")
 		train_type=list_detail[3][0]
 		if train_type.isdigit():
-			print ("normla")
+			train_type='绿皮'
+			print ('火车类型:绿皮火车')
 		else:
-			print (train_type)
+			print ('火车类型:'+train_type)
 		start_station=list_detail[2].split('-')[0]
-		print (start_station)
+		print ("出发站:"+start_station)
 		stop_station=list_detail[2].split('-')[1]
-		print (stop_station)
+		print ("终点站:"+stop_station)
 		sit_row=list_detail[3].split(",")[1].split("车")[0]
-		print (sit_row)
+		print ("车厢号:"+sit_row)
 		sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
-		print (sit_no)
+		print ("座位号:"+sit_no)
 		sit_type=list_detail[4]
-		print (sit_type)
+		print ("座位类型:"+sit_type)
 		if sit_type=="硬卧":
 			sit_flow=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
-			print (sit_flow)
-		try:
+			print ("卧铺位置:"+sit_flow)
+		if start_station=="郑州东站":
 			ticket_entrance=list_detail[6][3:].split("。")[0]
-			print (ticket_entrance)
-		except IndexError:
-			print("qwqww")
+			print ("检票口:"+ticket_entrance)
+		else:
+			print("非郑州东站，不检测检票口")
+		print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
 	elif '改签' in order_type:
+		print("~~~~~~~~~~~~~~~~~part_2_start~~~~~~~~~~~~~~~~~~~~~~~")
 		list_detail=contents[41].replace("\n",'').replace("\t",'').replace("\r",'').split("，")
 		print(list_detail)
-		print ('改签')
-		order_purchaser='张文'
-		print(order_purchaser)
 		order_no=line_chick_part3
-		print(order_no)
+		print("订单号:"+order_no)
+		order_purchaser='张文'
+		print("操作人员:"+order_purchaser)
 		order_date=line_chick_part1[2:13]
-		print (order_date)
-		order_price=line_chick_part2.split("，")[1][7:]
-		print (order_price)
+		print ("订单日期:"+order_date)
 		order_type="改签"
-		print (order_type)
+		print ("订单状态:"+order_type)
+		order_price=line_chick_part2.split("，")[1][7:]
+		print ("车票金额:"+order_price)
 		train_passenger=list_detail[0].split('.')[1]
-		print (train_passenger)
+		print("车票差价:")
+		print ("改签乘客:"+train_passenger)
 		train_date=list_detail[1][:-1]
-		print (train_date)
+		print ("发车日期:"+train_date)
 		train_price=list_detail[5][2:]
-		print (train_price)
 		train_no=list_detail[3].split(",")[0].replace("次列车",'')
-		print (train_no)
+		print ("火车车次:"+train_no)
+		print ("火车票价:"+train_price)
 		train_type=list_detail[3][0]
 		if train_type.isdigit():
-			print ("normla")
+			train_type='绿皮'
+			print ('火车类型:绿皮火车')
 		else:
-			print (train_type)
+			print ('火车类型:'+train_type)
 		start_station=list_detail[2].split('-')[0]
-		print (start_station)
+		print ("出发站:"+start_station)
 		stop_station=list_detail[2].split('-')[1]
-		print (stop_station)
+		print ("终点站:"+stop_station)
 		sit_row=list_detail[3].split(",")[1].split("车")[0]
-		print (sit_row)
-		sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
-		print (sit_no)
 		sit_type=list_detail[4]
-		print (sit_type)
+		print ("座位类型:"+sit_type)
+		print ("车厢号:"+sit_row)
+		sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
+		print ("座位号:"+sit_no)
 		if sit_type=="硬卧":
 			sit_flow=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
-			print (sit_flow)
-		try:
+			print ("卧铺位置:"+sit_flow)
+		if start_station=="郑州东站":
 			ticket_entrance=list_detail[6][3:].split("。")[0]
-			print (ticket_entrance)
-		except IndexError:
-			print("qwqww")
+			print ("检票口:"+ticket_entrance)
+		else:
+			print("非郑州东站，不检测检票口")
 
 
 
@@ -478,8 +505,14 @@ def get_content(num):
 			continue'''
 
 if __name__ == '__main__':
-	count = 1
-	while count < 170:
+	count = 0
+	while count < 520:
+		print("******************part_1*********************")
+		print("******************part_1*********************")
+		print("******************part_1*********************")
+		print("******************part_1*********************")
+		print("******************part_1*********************")
+		print("******************part_1*********************")
 		print("******************part_1*********************")
 		print('现在开始查询第'+str(count)+'封邮件')
 		org_addrs=str(get_from(email_list[int(count)]))
