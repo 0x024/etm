@@ -87,7 +87,10 @@ def get_transfer_v1(content):
 				print ("检票口:"+ticket_entrance)
 			else:
 				print("非郑州东站，不检测检票口")'''
-			#c.execute("INSERT INTO purchaser(id,order_no,order_purchaser,order_date,order_price,order_type,train_passenger,train_date,train_no,train_price,Transfer_fee,drawback_fee,train_type,start_station,stop_station,sit_type,sit_row,sit_no,sit_flow)")
+			c.execute("INSERT INTO purchaser values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,)" \
+				%(order_no,order_purchaser,order_date,order_price,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no,sit_flow))
+			conn.commit()
+			conn.close()
 			count=count+1
 			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
