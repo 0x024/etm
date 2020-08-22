@@ -5,6 +5,8 @@ from email.utils import parseaddr
 import time,re
 import datetime
 from script import Transfer
+from script import Location
+
 
 
 

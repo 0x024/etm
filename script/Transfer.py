@@ -1,5 +1,10 @@
 import re
 from lxml import etree
+import sqlite3
+from script import Location
+conn =sqlite3.connect('www.db')
+c=conn.cursor()
+
 
 def get_transfer_v1(content):
 	a1=content.replace('&nbsp;','')
@@ -57,8 +62,16 @@ def get_transfer_v1(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('—')[0]
 			print ('出发站:'+start_station)
+			lat=Location.get_local(start_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(start_station)[1]
+			print ("维度:"+log)
 			stop_station=list_detail[2].split('—')[1]
 			print ('终点站:'+stop_station)
+			lat=Location.get_local(stop_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(stop_station)[1]
+			print ("维度:"+log)			
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
 			sit_row=list_detail[4].split("车")[0]
@@ -74,6 +87,7 @@ def get_transfer_v1(content):
 				print ("检票口:"+ticket_entrance)
 			else:
 				print("非郑州东站，不检测检票口")'''
+			#c.execute("INSERT INTO purchaser(id,order_no,order_purchaser,order_date,order_price,order_type,train_passenger,train_date,train_no,train_price,Transfer_fee,drawback_fee,train_type,start_station,stop_station,sit_type,sit_row,sit_no,sit_flow)")
 			count=count+1
 			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -117,8 +131,16 @@ def get_transfer_v1(content):
 			print ('火车类型:'+train_type)
 		start_station=list_detail[2].split('—')[0]
 		print ('出发站:'+start_station)
+		lat=Location.get_local(start_station)[0]
+		print ("经度:"+lat)
+		log=Location.get_local(start_station)[1]
+		print ("维度:"+log)
 		stop_station=list_detail[2].split('—')[1]
 		print ('终点站:'+stop_station)
+		lat=Location.get_local(stop_station)[0]
+		print ("经度:"+lat)
+		log=Location.get_local(stop_station)[1]
+		print ("维度:"+log)
 		sit_type=list_detail[5]
 		print ('座位类型:'+sit_type)
 		sit_row=list_detail[4].split("车")[0].replace(" ","")
@@ -177,8 +199,16 @@ def get_transfer_v1(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('—')[0]
 			print ('出发站:'+start_station)
+			lat=Location.get_local(start_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(start_station)[1]
+			print ("维度:"+log)
 			stop_station=list_detail[2].split('—')[1]
 			print ('终点站:'+stop_station)
+			lat=Location.get_local(stop_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(stop_station)[1]
+			print ("维度:"+log)
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
 			sit_row=list_detail[4].split("车")[0].replace(" ","")
@@ -253,8 +283,16 @@ def get_transfer_v2(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('-')[0]
 			print ("出发站:"+start_station)
+			lat=Location.get_local(start_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(start_station)[1]
+			print ("维度:"+log)
 			stop_station=list_detail[2].split('-')[1]
 			print ("终点站:"+stop_station)
+			lat=Location.get_local(stop_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(stop_station)[1]
+			print ("维度:"+log)
 			sit_type=list_detail[4]
 			print ("座位类型:"+sit_type)
 			sit_row=list_detail[3].split(",")[1].split("车")[0]
@@ -313,8 +351,16 @@ def get_transfer_v2(content):
 			print ('火车类型:'+train_type)
 		start_station=list_detail[2].split('-')[0]
 		print ("出发站:"+start_station)
+		lat=Location.get_local(start_station)[0]
+		print ("经度:"+lat)
+		log=Location.get_local(start_station)[1]
+		print ("维度:"+log)
 		stop_station=list_detail[2].split('-')[1]
 		print ("终点站:"+stop_station)
+		lat=Location.get_local(stop_station)[0]
+		print ("经度:"+lat)
+		log=Location.get_local(stop_station)[1]
+		print ("维度:"+log)
 		sit_row=list_detail[3].split(",")[1].split("车")[0]
 		print ("车厢号:"+sit_row)
 		sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
@@ -364,8 +410,16 @@ def get_transfer_v2(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('-')[0]
 			print ("出发站:"+start_station)
+			lat=Location.get_local(start_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(start_station)[1]
+			print ("维度:"+log)
 			stop_station=list_detail[2].split('-')[1]
 			print ("终点站:"+stop_station)
+			lat=Location.get_local(stop_station)[0]
+			print ("经度:"+lat)
+			log=Location.get_local(stop_station)[1]
+			print ("维度:"+log)
 			sit_row=list_detail[3].split(",")[1].split("车")[0]
 			sit_type=list_detail[4]
 			print ("座位类型:"+sit_type)
