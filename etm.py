@@ -134,7 +134,7 @@ def get_content(num):
 
 if __name__ == '__main__':
 	count = 1
-	while count < 528:
+	while count < 2:
 		print("******************part_1*********************")
 		print("******************part_1*********************")
 		print("******************part_1*********************")

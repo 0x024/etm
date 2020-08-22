@@ -62,15 +62,15 @@ def get_transfer_v1(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('—')[0]
 			print ('出发站:'+start_station)
-			lat=Location.get_local(start_station)[0]
+			start_lat=Location.get_local(start_station)[0]
 			print ("经度:"+lat)
-			log=Location.get_local(start_station)[1]
+			start_log=Location.get_local(start_station)[1]
 			print ("维度:"+log)
 			stop_station=list_detail[2].split('—')[1]
 			print ('终点站:'+stop_station)
-			lat=Location.get_local(stop_station)[0]
+			stop_lat=Location.get_local(stop_station)[0]
 			print ("经度:"+lat)
-			log=Location.get_local(stop_station)[1]
+			stop_log=Location.get_local(stop_station)[1]
 			print ("维度:"+log)			
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
