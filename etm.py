@@ -133,8 +133,8 @@ def get_content(num):
 			continue'''
 
 if __name__ == '__main__':
-	count = 1
-	while count < 2:
+	count = 0
+	while count < 1:
 		print("******************part_1*********************")
 		print("******************part_1*********************")
 		print("******************part_1*********************")
