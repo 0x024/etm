@@ -1,9 +1,15 @@
 import re
 from lxml import etree
 import sqlite3
+import datetime
+import time
 from script import Location
-conn =sqlite3.connect('www.db')
+from script import Timeformate
+conn =sqlite3.connect('etm1.db')
 c=conn.cursor()
+
+
+
 
 
 def get_transfer_v1(content):
@@ -30,9 +36,12 @@ def get_transfer_v1(content):
 		print('订单号:'+str(order_no))
 		order_purchaser='张文'
 		print('操作人员:'+order_purchaser)
-		order_date=list_chick[0][2:13]
-		print ('订单日期:'+order_date)
-		order_price=list_chick[1][4:]
+		order_date_o=list_chick[0][2:13].replace("年",'').replace("月",'').replace("日",'')
+		print (order_date_o)
+		print (isinstance(order_date_o,str))
+		order_date=Timeformate.order_time_formate(order_date_o)
+		print ('订单日期:'+order_date_o)
+		order_price=list_chick[1][4:].replace("元",'')
 		print ('订单金额:'+order_price)
 		order_type="购买"
 		print ('订单状态:'+order_type)
@@ -48,11 +57,12 @@ def get_transfer_v1(content):
 			print ('第'+str(count)+'张车票信息如下')
 			train_passenger=list_detail[0].split('.')[1]
 			print ('火车乘客:'+train_passenger)
-			train_date=list_detail[1][:-1]
-			print ('发车日期:'+train_date)
+			train_date_o=list_detail[1][:-1].replace("年",'').replace("月",'').replace("日",'')
+			train_date=Timeformate.train_time_formate(train_date_o)
+			print ('发车日期:'+train_date_o)
 			train_no=list_detail[3].replace("次列车",'')
 			print ('火车车次:'+train_no)
-			train_price=list_detail[6][2:].replace("。",'')
+			train_price=list_detail[6][2:].replace("。",'').replace("元",'')
 			print ('火车票价:'+train_price)
 			train_type=list_detail[3][0]
 			if train_type.isdigit():
@@ -63,34 +73,52 @@ def get_transfer_v1(content):
 			start_station=list_detail[2].split('—')[0]
 			print ('出发站:'+start_station)
 			start_lat=Location.get_local(start_station)[0]
-			print ("经度:"+lat)
+			print ("经度:"+start_lat)
 			start_log=Location.get_local(start_station)[1]
-			print ("维度:"+log)
+			print ("维度:"+start_log)
 			stop_station=list_detail[2].split('—')[1]
 			print ('终点站:'+stop_station)
 			stop_lat=Location.get_local(stop_station)[0]
-			print ("经度:"+lat)
+			print ("经度:"+stop_lat)
 			stop_log=Location.get_local(stop_station)[1]
-			print ("维度:"+log)			
+			print ("维度:"+stop_log)			
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
 			sit_row=list_detail[4].split("车")[0]
 			print ('车厢号:'+sit_row)
 			sit_no=list_detail[4].split("车")[1].split("号")[0]
 			print ('座位号:'+sit_no)
-
+			c.execute("INSERT INTO purchase (order_no,order_purchaser,order_date,order_count,order_price,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no) \
+				VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
+				%(order_no,order_purchaser,order_date,order_count,order_price,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no))
+			conn.commit()
+			try:
+				raw_sit=list_detail[4].split("车")[1].split("号")[1]
+			except IndexError:
+				print ("无座")
 			if sit_type=="硬卧":
-				sit_flow=list_detail[4][-2]
-				print ('卧铺位置:'+sit_flow)
+				if"上" in raw_sit:
+					sit_flow='上'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  purchase SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif"中" in raw_sit:
+					sit_flow='中'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  purchase SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif "下" in raw_sit:
+					sit_flow='下'	
+					print ("卧铺位置:"+sit_flow)	
+					c.execute("UPDATE  purchase SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()		
 			'''if start_station=="郑州东站":
 				ticket_entrance=list_detail[6][3:].split("。")[0]
 				print ("检票口:"+ticket_entrance)
 			else:
 				print("非郑州东站，不检测检票口")'''
-			c.execute("INSERT INTO purchaser values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,)" \
-				%(order_no,order_purchaser,order_date,order_price,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no,sit_flow))
-			conn.commit()
-			conn.close()
+
+			#conn.close()
 			count=count+1
 			print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -110,21 +138,24 @@ def get_transfer_v1(content):
 		print('订单号:'+str(order_no))
 		order_purchaser='张文'
 		print('操作人员:'+order_purchaser)
-		order_date=list_chick[0][2:13]
-		print ('订单日期:'+order_date)
+		order_date_o=list_chick[0][2:13].replace("年",'').replace("月",'').replace("日",'')
+		order_date=Timeformate.order_time_formate(order_date_o)
+		print (order_date)
+		print ('订单日期:'+order_date_o)
 		order_type="退票"
 		print ('订单状态:'+order_type)
 		train_passenger=list_detail[0]
 		print ('退票乘客:'+train_passenger)
-		train_date=order_date[0:5]+list_detail[1]
-		print ('发车日期:'+train_date)
+		train_date_o=order_date_o[0:4]+list_detail[1].replace("年",'').replace("月",'').replace("日",'')
+		train_date=Timeformate.train_time_formate(train_date_o)
+		print ('发车日期:'+train_date_o)
 		train_no=list_detail[3].replace("次列车",'')
 		print ('火车车次:'+train_no)
-		train_price=list_detail[6][2:]
+		train_price=list_detail[6][2:].replace("元",'')
 		print ('原始票价:'+train_price)
-		transfer_fee=list_detail[7][3:]
+		transfer_fee=list_detail[7][3:].replace("元",'')
 		print ('退手续费:'+transfer_fee)
-		drawback_fee=list_detail[8][4:].replace("。",'')
+		drawback_fee=list_detail[8][4:].replace("。",'').replace("元",'')
 		print ('应退金额:'+drawback_fee)
 		train_type=list_detail[3][0]
 		if train_type.isdigit():
@@ -134,25 +165,46 @@ def get_transfer_v1(content):
 			print ('火车类型:'+train_type)
 		start_station=list_detail[2].split('—')[0]
 		print ('出发站:'+start_station)
-		lat=Location.get_local(start_station)[0]
-		print ("经度:"+lat)
-		log=Location.get_local(start_station)[1]
-		print ("维度:"+log)
+		start_lat=Location.get_local(start_station)[0]
+		print ("经度:"+start_lat)
+		start_log=Location.get_local(start_station)[1]
+		print ("维度:"+start_log)
 		stop_station=list_detail[2].split('—')[1]
 		print ('终点站:'+stop_station)
-		lat=Location.get_local(stop_station)[0]
-		print ("经度:"+lat)
-		log=Location.get_local(stop_station)[1]
-		print ("维度:"+log)
+		stop_lat=Location.get_local(stop_station)[0]
+		print ("经度:"+stop_lat)
+		stop_log=Location.get_local(stop_station)[1]
+		print ("维度:"+stop_log)
 		sit_type=list_detail[5]
 		print ('座位类型:'+sit_type)
 		sit_row=list_detail[4].split("车")[0].replace(" ","")
 		print ('车厢号:'+sit_row)
 		sit_no=list_detail[4].split("车")[1].split("号")[0]
 		print ('座位号:'+sit_no)
+		c.execute("INSERT INTO Refund (order_no,order_purchaser,order_date,order_type,train_passenger,train_date,train_no,train_price,transfer_fee,drawback_fee,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no) \
+			VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
+			%(order_no,order_purchaser,order_date,order_type,train_passenger,train_date,train_no,train_price,transfer_fee,drawback_fee,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no))
+		conn.commit()
+		try:
+			raw_sit=list_detail[4].split("车")[1].split("号")[1]
+		except IndexError:
+			print ("无座")
 		if sit_type=="硬卧":
-			sit_flow=list_detail[4][-2]
-			print ('卧铺位置:'+sit_flow)
+			if"上" in raw_sit:
+				sit_flow='上'
+				print ("卧铺位置:"+sit_flow)
+				c.execute("UPDATE  Refund SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+				conn.commit()
+			elif"中" in raw_sit:
+				sit_flow='中'
+				print ("卧铺位置:"+sit_flow)
+				c.execute("UPDATE  Refund SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+				conn.commit()
+			elif "下" in raw_sit:
+				sit_flow='下'	
+				print ("卧铺位置:"+sit_flow)	
+				c.execute("UPDATE  Refund SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+				conn.commit()
 		'''if start_station=="郑州东站":
 			ticket_entrance=list_detail[6][3:].split("。")[0]
 			print ("检票口:"+ticket_entrance)
@@ -167,8 +219,9 @@ def get_transfer_v1(content):
 		print('订单号:'+str(order_no))
 		order_purchaser='张文'
 		print('操作人员:'+order_purchaser)
-		order_date=list_chick[0][2:13]
-		print ('订单日期:'+order_date)
+		order_date_o=list_chick[0][2:13].replace("年",'').replace("月",'').replace("日",'')
+		order_date=Timeformate.order_time_formate(order_date_o)
+		print ('订单日期:'+order_date_o)
 		order_type="退票"
 		print ('订单状态:'+order_type)
 		count =1
@@ -188,11 +241,12 @@ def get_transfer_v1(content):
 			print ('第'+str(count)+'张车票信息如下')
 			train_passenger=list_detail[0].split('.')[1]
 			print ('改签乘客:'+train_passenger)
-			train_date=order_date[0:5]+list_detail[1].replace("开",'')
-			print ('发车日期:'+train_date)
+			train_date_o=order_date_o[0:4]+list_detail[1].replace("开",'').replace("年",'').replace("月",'').replace("日",'')
+			train_date=Timeformate.train_time_formate(train_date_o)
+			print ('发车日期:'+train_date_o)
 			train_no=list_detail[3].replace("次列车",'')
 			print ('火车车次:'+train_no)
-			train_price=list_detail[6][2:].replace("。",'')
+			train_price=list_detail[6][2:].replace("。",'').replace("元",'')
 			print ('火车票价:'+train_price)
 			train_type=list_detail[3][0]
 			if train_type.isdigit():
@@ -202,25 +256,46 @@ def get_transfer_v1(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('—')[0]
 			print ('出发站:'+start_station)
-			lat=Location.get_local(start_station)[0]
-			print ("经度:"+lat)
-			log=Location.get_local(start_station)[1]
-			print ("维度:"+log)
+			start_lat=Location.get_local(start_station)[0]
+			print ("经度:"+start_lat)
+			start_log=Location.get_local(start_station)[1]
+			print ("维度:"+start_log)
 			stop_station=list_detail[2].split('—')[1]
 			print ('终点站:'+stop_station)
-			lat=Location.get_local(stop_station)[0]
-			print ("经度:"+lat)
-			log=Location.get_local(stop_station)[1]
-			print ("维度:"+log)
+			stop_lat=Location.get_local(stop_station)[0]
+			print ("经度:"+stop_lat)
+			stop_log=Location.get_local(stop_station)[1]
+			print ("维度:"+stop_log)
 			sit_type=list_detail[5]
 			print ('座位类型:'+sit_type)
 			sit_row=list_detail[4].split("车")[0].replace(" ","")
 			print ('车厢号:'+sit_row)
 			sit_no=list_detail[4].split("车")[1].split("号")[0]
 			print ('座位号:'+sit_no)
+			c.execute("INSERT INTO change (order_no,order_purchaser,order_date,order_count,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no) \
+				VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
+				%(order_no,order_purchaser,order_date,order_count,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no))
+			conn.commit()
+			try:
+				raw_sit=list_detail[4].split("车")[1].split("号")[1]
+			except IndexError:
+				print ("无座")
 			if sit_type=="硬卧":
-				sit_flow=list_detail[4][-2]
-				print ('卧铺位置:'+sit_flow)
+				if"上" in raw_sit:
+					sit_flow='上'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  change SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif"中" in raw_sit:
+					sit_flow='中'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  change SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif "下" in raw_sit:
+					sit_flow='下'	
+					print ("卧铺位置:"+sit_flow)	
+					c.execute("UPDATE  change SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
 			'''if start_station=="郑州东站":
 				ticket_entrance=list_detail[6][3:].split("。")[0]
 				print ("检票口:"+ticket_entrance)
@@ -259,8 +334,9 @@ def get_transfer_v2(content):
 		print("订单号:"+order_no)
 		order_purchaser='张文'
 		print("操作人员:"+order_purchaser)
-		order_date=line_chick_part1[2:13]
-		print("订单日期:"+order_date)
+		order_date_o=line_chick_part1[2:13].replace("年",'').replace("月",'').replace("日",'')
+		order_date=Timeformate.order_time_formate(order_date_o)
+		print("订单日期:"+order_date_o)
 		order_price=line_chick_part2.split("，")[1][4:]
 		print("订单金额:"+order_price)
 		order_type="购买"
@@ -272,8 +348,9 @@ def get_transfer_v2(content):
 			print ('第'+str(count)+'张车票信息如下')
 			train_passenger=list_detail[0].split('.')[1]
 			print ("火车乘客:"+train_passenger)
-			train_date=list_detail[1][:-1]
-			print ("发车日期:"+train_date)
+			train_date_o=list_detail[1][:-1].replace("年",'').replace("月",'').replace("日",'')
+			train_date=Timeformate.train_time_formate(train_date_o)
+			print ("发车日期:"+train_date_o)
 			train_no=list_detail[3].split(",")[0].replace("次列车",'')
 			print ("火车车次:"+train_no)
 			train_price=list_detail[5][2:].replace("。",'')
@@ -286,30 +363,53 @@ def get_transfer_v2(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('-')[0]
 			print ("出发站:"+start_station)
-			lat=Location.get_local(start_station)[0]
-			print ("经度:"+lat)
-			log=Location.get_local(start_station)[1]
-			print ("维度:"+log)
+			start_lat=Location.get_local(start_station)[0]
+			print ("经度:"+start_lat)
+			start_log=Location.get_local(start_station)[1]
+			print ("维度:"+start_log)
 			stop_station=list_detail[2].split('-')[1]
 			print ("终点站:"+stop_station)
-			lat=Location.get_local(stop_station)[0]
-			print ("经度:"+lat)
-			log=Location.get_local(stop_station)[1]
-			print ("维度:"+log)
+			stop_lat=Location.get_local(stop_station)[0]
+			print ("经度:"+stop_lat)
+			stop_log=Location.get_local(stop_station)[1]
+			print ("维度:"+stop_log)
 			sit_type=list_detail[4]
 			print ("座位类型:"+sit_type)
 			sit_row=list_detail[3].split(",")[1].split("车")[0]
 			print ("车厢号:"+sit_row)
-			sit_no=list_detail[3].split(",")[1].split("车")[1].replace("号","")
+			sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
 			print ("座位号:"+sit_no)
+			c.execute("INSERT INTO purchase (order_no,order_purchaser,order_date,order_count,order_price,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no) \
+				VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
+				%(order_no,order_purchaser,order_date,order_count,order_price,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no))
+			conn.commit()
+			try:			
+				raw_sit=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
+			except IndexError:
+				print ("无座")
 			if sit_type=="硬卧":
-				sit_flow=list_detail[4][-2]
-				print ("卧铺位置:"+sit_flow)
+				if"上" in raw_sit:
+					sit_flow='上'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  purchase SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()					
+				elif"中" in raw_sit:
+					sit_flow='中'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  purchase SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif "下" in raw_sit:
+					sit_flow='下'	
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  purchase SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
 			if '郑州东' in start_station:
 
 				try:
 					ticket_entrance=list_detail[6][3:].split("。")[0]
 					print ("检票口:"+ticket_entrance)
+					c.execute("UPDATE  purchase SET ticket_entrance='%s' WHERE  order_no='%s'"%(ticket_entrance,order_no))
+
 				except IndexError:
 					print ("虽是郑州东站，但确实没标记进站口")
 			else:
@@ -326,14 +426,17 @@ def get_transfer_v2(content):
 		print("订单号:"+order_no)
 		order_purchaser='张文'
 		print("操作人员:"+order_purchaser)
-		order_date=line_chick_part1[2:13]
-		print ("订单日期:"+order_date)
+		order_date_o=line_chick_part1[2:13].replace("年",'').replace("月",'').replace("日",'')
+		order_date=Timeformate.order_time_formate(order_date_o)
+		print ("订单日期:"+order_date_o)
 		order_type="退票"
 		print ("订单状态:"+order_type)
 		train_passenger=list_detail[0].replace("1.",'')
 		print ("退票乘客:"+train_passenger)
-		train_date=list_detail[1][2:16]
-		print ("发车日期:"+train_date)
+		train_date_o=list_detail[1][:16].replace("年",'').replace("月",'').replace("日",'')
+		print (train_date_o)
+		train_date=Timeformate.train_time_formate(train_date_o)
+		print ("发车日期:"+train_date_o)
 		train_no=list_detail[3].split(",")[0].replace("次列车",'')
 		print ("火车车次:"+train_no)
 		train_price=list_detail[5][2:].replace("。",'')
@@ -346,6 +449,8 @@ def get_transfer_v2(content):
 			print ('应退金额:'+drawback_fee)
 		except IndexError:
 			print ("票据内容不标准，忽略")
+			transfer_fee="票据内容不标准"
+			drawback_fee="票据内容不标准"
 		train_type=list_detail[3][0]
 		if train_type.isdigit():
 			train_type='绿皮'
@@ -354,25 +459,46 @@ def get_transfer_v2(content):
 			print ('火车类型:'+train_type)
 		start_station=list_detail[2].split('-')[0]
 		print ("出发站:"+start_station)
-		lat=Location.get_local(start_station)[0]
-		print ("经度:"+lat)
-		log=Location.get_local(start_station)[1]
-		print ("维度:"+log)
+		start_lat=Location.get_local(start_station)[0]
+		print ("经度:"+start_lat)
+		start_log=Location.get_local(start_station)[1]
+		print ("维度:"+start_log)
 		stop_station=list_detail[2].split('-')[1]
 		print ("终点站:"+stop_station)
-		lat=Location.get_local(stop_station)[0]
-		print ("经度:"+lat)
-		log=Location.get_local(stop_station)[1]
-		print ("维度:"+log)
+		stop_lat=Location.get_local(stop_station)[0]
+		print ("经度:"+stop_lat)
+		stop_log=Location.get_local(stop_station)[1]
+		print ("维度:"+stop_log)
 		sit_row=list_detail[3].split(",")[1].split("车")[0]
 		print ("车厢号:"+sit_row)
 		sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
 		print ("座位号:"+sit_no)
 		sit_type=list_detail[4]
 		print ("座位类型:"+sit_type)
+		c.execute("INSERT INTO Refund (order_no,order_purchaser,order_date,order_type,train_passenger,train_date,train_no,train_price,transfer_fee,drawback_fee,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no) \
+			VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
+			%(order_no,order_purchaser,order_date,order_type,train_passenger,train_date,train_no,train_price,transfer_fee,drawback_fee,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no))
+		conn.commit()
+		try:
+			raw_sit=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
+		except IndexError:
+			print ("无座")
 		if sit_type=="硬卧":
-			sit_flow=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
-			print ("卧铺位置:"+sit_flow)
+			if"上" in raw_sit:
+				sit_flow='上'
+				print ("卧铺位置:"+sit_flow)
+				c.execute("UPDATE  Refund SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+				conn.commit()
+			elif"中" in raw_sit:
+				sit_flow='中'
+				print ("卧铺位置:"+sit_flow)
+				c.execute("UPDATE  Refund SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+				conn.commit()
+			elif "下" in raw_sit:
+				sit_flow='下'	
+				print ("卧铺位置:"+sit_flow)
+				c.execute("UPDATE  Refund SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+				conn.commit()
 		print("~~~~~~~~~~~~~~~~~part_2_end~~~~~~~~~~~~~~~~~~~~~~~")
 
 	elif '改签' in order_type:
@@ -383,8 +509,9 @@ def get_transfer_v2(content):
 		print("订单号:"+order_no)
 		order_purchaser='张文'
 		print("操作人员:"+order_purchaser)
-		order_date=line_chick_part1[2:13]
-		print ("订单日期:"+order_date)
+		order_date_o=line_chick_part1[2:13].replace("年",'').replace("月",'').replace("日",'')
+		order_date=Timeformate.order_time_formate(order_date_o)
+		print ("订单日期:"+order_date_o)
 		order_type="改签"
 		print ("订单状态:"+order_type)
 		order_price=line_chick_part2.split("，")[1][7:]
@@ -399,8 +526,9 @@ def get_transfer_v2(content):
 			else:
 				print("车票差价:111111元")
 			print ("改签乘客:"+train_passenger)
-			train_date=list_detail[1][:-1]
-			print ("发车日期:"+train_date)
+			train_date_o=list_detail[1][:-1].replace("年",'').replace("月",'').replace("日",'')
+			train_date=Timeformate.train_time_formate(train_date_o)
+			print ("发车日期:"+train_date_o)
 			train_price=list_detail[5][2:].replace("。",'')
 			train_no=list_detail[3].split(",")[0].replace("次列车",'')
 			print ("火车车次:"+train_no)
@@ -413,25 +541,46 @@ def get_transfer_v2(content):
 				print ('火车类型:'+train_type)
 			start_station=list_detail[2].split('-')[0]
 			print ("出发站:"+start_station)
-			lat=Location.get_local(start_station)[0]
-			print ("经度:"+lat)
-			log=Location.get_local(start_station)[1]
-			print ("维度:"+log)
+			start_lat=Location.get_local(start_station)[0]
+			print ("经度:"+start_lat)
+			start_log=Location.get_local(start_station)[1]
+			print ("维度:"+start_log)
 			stop_station=list_detail[2].split('-')[1]
 			print ("终点站:"+stop_station)
-			lat=Location.get_local(stop_station)[0]
-			print ("经度:"+lat)
-			log=Location.get_local(stop_station)[1]
-			print ("维度:"+log)
+			stop_lat=Location.get_local(stop_station)[0]
+			print ("经度:"+stop_lat)
+			stop_log=Location.get_local(stop_station)[1]
+			print ("维度:"+stop_log)
 			sit_row=list_detail[3].split(",")[1].split("车")[0]
 			sit_type=list_detail[4]
 			print ("座位类型:"+sit_type)
 			print ("车厢号:"+sit_row)
 			sit_no=list_detail[3].split(",")[1].split("车")[1].split("号")[0]
 			print ("座位号:"+sit_no)
+			c.execute("INSERT INTO change (order_no,order_purchaser,order_date,order_count,order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no) \
+				VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
+				%(order_no,order_purchaser,order_date,order_count.order_type,train_passenger,train_date,train_no,train_price,train_type,start_station,start_lat,start_log,stop_station,stop_lat,stop_log,sit_type,sit_row,sit_no))
+			conn.commit()
+			try:
+				raw_sit=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
+			except IndexError:
+				print ("无座")
 			if sit_type=="硬卧":
-				sit_flow=list_detail[3].split(",")[1].split("车")[1].split("号")[1]
-				print ("卧铺位置:"+sit_flow)
+				if"上" in raw_sit:
+					sit_flow='上'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  change SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif"中" in raw_sit:
+					sit_flow='中'
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  change SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
+				elif "下" in raw_sit:
+					sit_flow='下'	
+					print ("卧铺位置:"+sit_flow)
+					c.execute("UPDATE  change SET sit_flow='%s' WHERE  order_no='%s'"%(sit_flow,order_no))
+					conn.commit()
 
 
 			if '郑州东' in start_station:

@@ -105,10 +105,6 @@ def get_content(num):
 					print('该邮件使用的新的内容，现使用V2版本进行解析')
 					Transfer.get_transfer_v2(content)
 
-				
-				#
-				#print (content)
-
 	except TypeError:
 		print ('empty-email')
 	except UnicodeDecodeError:
@@ -134,7 +130,7 @@ def get_content(num):
 
 if __name__ == '__main__':
 	count = 0
-	while count < 1:
+	while count < 530:
 		print("******************part_1*********************")
 		print("******************part_1*********************")
 		print("******************part_1*********************")
@@ -152,6 +148,7 @@ if __name__ == '__main__':
 		count=count+1
 		print("此邮件解析完毕了")
 		print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~~~~~~~")
+		#time.sleep(2)
 
 #
 #get_from(email_list[330])
