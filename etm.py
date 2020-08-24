@@ -4,13 +4,17 @@ from email.parser import BytesParser
 from email.utils import parseaddr 
 import time,re
 import datetime
-from script import Transfer
+from script import TransferV1
+from script import TransferV2
 from script import Location
-
-
-
-
-aaaa=1
+#conn =sqlite3.connect('etm1.db')
+#c=conn.cursor()
+'''c.execute("DELETE FROM etm_aio")
+c.execute("DELETE FROM change")
+c.execute("DELETE FROM purchase")
+c.execute("DELETE FROM Refund")
+conn.commit()
+conn.close()'''
 
 
 host = 'imap.qq.com'
@@ -86,7 +90,7 @@ def time_formate(email_time):
 		return '2'
 	else:
 		return '1'
-def get_content(num):
+def get_content(num,id):
 	type,data=raw_conn.fetch(num,'(RFC822)')
 	email_date=get_date(email_list[int(count)])
 	try :
@@ -100,10 +104,13 @@ def get_content(num):
 				temp=time_formate(email_date)
 				if temp=='1':
 					print('该邮件使用的老的内容，现使用V1版本进行解析')
-					Transfer.get_transfer_v1(content)
+					#TransferV1.get_transfer_v1(content,id)
+					TransferV2.get_transfer_v1(content,id)
+
 				elif temp=='2':
 					print('该邮件使用的新的内容，现使用V2版本进行解析')
-					Transfer.get_transfer_v2(content)
+					#TransferV1.get_transfer_v2(content,id)
+					TransferV2.get_transfer_v2(content,id)
 
 	except TypeError:
 		print ('empty-email')
@@ -144,11 +151,12 @@ if __name__ == '__main__':
 		tar_addrs="<12306@rails.com.cn>"
 		if tar_addrs in  org_addrs:
 			print("已匹配到12306邮件，下一步解析该邮件")
-			get_content(email_list[int(count)])
+			get_content(email_list[int(count)],count)
 		count=count+1
 		print("此邮件解析完毕了")
 		print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~~~~~~~")
 		#time.sleep(2)
+		#conn.close()
 
 #
 #get_from(email_list[330])
