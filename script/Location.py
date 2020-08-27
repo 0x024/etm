@@ -1,5 +1,6 @@
 import json
 import os
+import random
 def get_local(city):
 
 	citys = [{
@@ -12902,12 +12903,20 @@ def get_local(city):
 
 
 	for i in range(len(citys)):
+		temp=random.uniform(0.05, 0.09)
+		temp_random=round(temp,6)
+		#print (temp_random)
 		local_json= json.dumps(citys[i], sort_keys=True)
 		local_dict=json.loads(local_json)
 		if  city in local_dict['name'] :
-			lng=local_dict['lnglat'][0]
-			lat=local_dict['lnglat'][1]
+			random_lng=local_dict['lnglat'][0]+temp_random
+			lng=round(random_lng,8)
+		#	print (lng)
+			random_lat=local_dict['lnglat'][1]+temp_random
+			lat=round(random_lat,7)
 
 			return lng,lat	
-#a="汤阴"
-#print (get_local(a)[1])
+
+
+a="汤阴"
+print (get_local(a))
