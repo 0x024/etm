@@ -7,9 +7,16 @@ from email.utils import parseaddr
 from script import TransferV1
 from script import TransferV2
 from script import Location
-conn =sqlite3.connect('./database/etm.db')
-'''conn =sqlite3.connect('./database/etm.db')
+conn =sqlite3.connect('/home/ubuntu/Desktop/etm/database/etm.db')
 c=conn.cursor()
+c.execute("delete from purchase;")
+c.execute("delete from etm_aio;")
+c.execute("delete from change;")
+c.execute("delete from Refund;")
+conn.commit()
+
+'''
+
 c.execute("DELETE FROM etm_aio")
 c.execute("DELETE FROM change")
 c.execute("DELETE FROM purchase")
@@ -138,7 +145,7 @@ def get_content(num,id):
 
 if __name__ == '__main__':
 	count = 0
-	while count < 530:
+	while count < 100:
 		print("******************part_1*********************")
 		print("******************part_1*********************")
 		print("******************part_1*********************")
