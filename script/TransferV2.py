@@ -5,7 +5,7 @@ import datetime
 import time
 from script import Location
 from script import Timeformate
-conn =sqlite3.connect('etm.db')
+conn =sqlite3.connect('./database/etm.db')
 c=conn.cursor()
 
 

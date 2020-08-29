@@ -1,15 +1,15 @@
 import sqlite3
+import time,re
+import datetime
 import os,email,imaplib
 from email.parser import BytesParser
 from email.utils import parseaddr 
-import time,re
-import datetime
 from script import TransferV1
 from script import TransferV2
 from script import Location
-#conn =sqlite3.connect('etm1.db')
-#c=conn.cursor()
-'''c.execute("DELETE FROM etm_aio")
+'''conn =sqlite3.connect('./database/etm.db')
+c=conn.cursor()
+c.execute("DELETE FROM etm_aio")
 c.execute("DELETE FROM change")
 c.execute("DELETE FROM purchase")
 c.execute("DELETE FROM Refund")
