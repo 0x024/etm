@@ -113,12 +113,12 @@ def get_content(num,id):
 				if temp=='1':
 					print('该邮件使用的老的内容，现使用V1版本进行解析')
 					#TransferV1.get_transfer_v1(content,id)
-					TransferV2.get_transfer_v1(content,id)
+					#TransferV2.get_transfer_v1(content,id)
 
 				elif temp=='2':
 					print('该邮件使用的新的内容，现使用V2版本进行解析')
 					#TransferV1.get_transfer_v2(content,id)
-					TransferV2.get_transfer_v2(content,id)
+					#TransferV2.get_transfer_v2(content,id)
 
 	except TypeError:
 		print ('empty-email')
