@@ -7,6 +7,7 @@ from email.utils import parseaddr
 from script import TransferV1
 from script import TransferV2
 from script import Location
+conn =sqlite3.connect('./database/etm.db')
 '''conn =sqlite3.connect('./database/etm.db')
 c=conn.cursor()
 c.execute("DELETE FROM etm_aio")
