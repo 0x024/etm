@@ -12,7 +12,7 @@ from database import Initdb
 
 host = 'imap.qq.com'
 user = '97073966@qq.com' 
-passwd = 'feaybkuahvcacajc'
+passwd = ''
 raw_conn = imaplib.IMAP4_SSL(host) 
 raw_conn.login(user,passwd) 
 raw_conn.select()
