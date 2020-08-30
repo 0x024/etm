@@ -1,9 +1,12 @@
 import os
 import sqlite3
-
-conn =sqlite3.connect('etm.db')
+pwd=os.getcwd()
+print (pwd)
+js_pwd=pwd+"/www/html/city_line.js"
+db_pwd=pwd+"/database/etm.db"
+conn =sqlite3.connect(db_pwd)
 cursor=conn.cursor()
-cursor.execute('select * from purchase where train_passenger="张文"')
+cursor.execute("select * from purchase where train_passenger='张文';")
 values=cursor.fetchall()
 city_lines=[]
 for i in range(len(values)):
@@ -20,8 +23,8 @@ for i in range(len(values)):
 	city_line="{\"name\":\""+name+"\","+"\"line\":["+line+"]}"
 	city_lines.append(city_line)
 
-	print (city_lines)
-f = open("city_line.js", "a")
+	#print (city_lines)
+f = open(js_pwd, "a")
 f.write("var city_line ="+str(city_lines).replace("'",""))
 f.close()
 	

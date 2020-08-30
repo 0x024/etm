@@ -7,22 +7,8 @@ from email.utils import parseaddr
 from script import TransferV1
 from script import TransferV2
 from script import Location
-conn =sqlite3.connect('/home/ubuntu/Desktop/etm/database/etm.db')
-c=conn.cursor()
-c.execute("delete from purchase;")
-c.execute("delete from etm_aio;")
-c.execute("delete from change;")
-c.execute("delete from Refund;")
-conn.commit()
+from database import Initdb
 
-'''
-
-c.execute("DELETE FROM etm_aio")
-c.execute("DELETE FROM change")
-c.execute("DELETE FROM purchase")
-c.execute("DELETE FROM Refund")
-conn.commit()
-conn.close()'''
 
 
 host = 'imap.qq.com'
@@ -113,12 +99,12 @@ def get_content(num,id):
 				if temp=='1':
 					print('该邮件使用的老的内容，现使用V1版本进行解析')
 					#TransferV1.get_transfer_v1(content,id)
-					#TransferV2.get_transfer_v1(content,id)
+					TransferV2.get_transfer_v1(content,id)
 
 				elif temp=='2':
 					print('该邮件使用的新的内容，现使用V2版本进行解析')
 					#TransferV1.get_transfer_v2(content,id)
-					#TransferV2.get_transfer_v2(content,id)
+					TransferV2.get_transfer_v2(content,id)
 
 	except TypeError:
 		print ('empty-email')
@@ -144,8 +130,9 @@ def get_content(num,id):
 			continue'''
 
 if __name__ == '__main__':
+	Initdb.init_etmdb(1)
 	count = 0
-	while count < 100:
+	while count < 530:
 		print("******************part_1*********************")
 		print("******************part_1*********************")
 		print("******************part_1*********************")

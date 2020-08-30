@@ -2,10 +2,12 @@ import re
 from lxml import etree
 import sqlite3
 import datetime
-import time
+import time,os
 from script import Location
 from script import Timeformate
-conn =sqlite3.connect("/home/ubuntu/Desktop/etm/database/etm.db")
+pwd=os.getcwd()
+db_pwd=pwd+"/database/etm.db"
+conn =sqlite3.connect(db_pwd)
 c=conn.cursor()
 
 
