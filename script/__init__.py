@@ -1,1 +1,1 @@
-__all__=["TransferV2","Location","Timeformate"]
+__all__=["TransferV2","Location","Timeformate","GaodeAPILocation"]

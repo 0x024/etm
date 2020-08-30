@@ -4,7 +4,6 @@ import datetime
 import os,email,imaplib
 from email.parser import BytesParser
 from email.utils import parseaddr 
-from script import TransferV1
 from script import TransferV2
 from script import Location
 from database import Initdb
